@@ -10,7 +10,8 @@ class PointRepository(private val pointDao: PointDao) {
 
     fun getAll() = pointDao.getAll()
 
-    fun getPointsOf(idTeam:Long,matchId:Long) = pointDao.getPointsOf(idTeam,matchId)
+    fun getLastMatchLive() = pointDao.getLastMatchLive()
+
 
     @WorkerThread
     suspend fun deleteAll() = pointDao.deleteAll()

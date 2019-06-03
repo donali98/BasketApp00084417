@@ -9,6 +9,7 @@ import com.donali.basketapp00084417.database.entities.BasketMatch
 import com.donali.basketapp00084417.database.viewmodels.BasketViewModel
 import com.donali.basketapp00084417.fragments.MatchFragment
 import com.donali.basketapp00084417.helpers.ActivityHelper
+import kotlinx.android.synthetic.main.activity_match.*
 import java.security.acl.Owner
 import java.text.SimpleDateFormat
 import java.util.*
@@ -35,7 +36,9 @@ class MatchActivity : AppCompatActivity(), ActivityHelper {
         bViewModel.insertMatch(BasketMatch(teamId1, teamId2, dateFormat.parse(dateFormat.format(cal.time))))
 
         bViewModel.getLastMatchLive().observe(this, Observer {
-            Log.d("CUSTOM","id= ${it.id}")
+            idMatch = it.id
+            val matchFragment1 = MatchFragment.newInstance(teamId1,idMatch)
+            supportFragmentManager.beginTransaction().add(R.id.fl_match,matchFragment1).commit()
         })
 
     }

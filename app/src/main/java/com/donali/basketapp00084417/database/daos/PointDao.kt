@@ -16,8 +16,9 @@ interface PointDao {
     @Query("select * from point")
     fun getAll(): LiveData<List<Point>>
 
-    @Query("select * from point where team_id = :idTeam and match_id = :matchId")
-    fun getPointsOf(idTeam:Long,matchId:Long):LiveData<Point>
+    @Query("select * from point")
+    fun getLastMatchLive():LiveData<Point>
+
 
     @Query("delete from point")
     suspend fun deleteAll()

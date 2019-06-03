@@ -35,9 +35,8 @@ class BasketViewModel(val app: Application) : AndroidViewModel(app) {
     fun getAllMatches() = basketMatchRepository.getAll()
     fun getLastMatchLive() = basketMatchRepository.getLastMatchLive()
     fun getAllPoints() = pointRepository.getAll()
-    fun getPointsOf(idTeam: Long, matchId: Long) = pointRepository.getPointsOf(idTeam, matchId)
     fun getAllTeamsExcept(id: Long) = teamRepository.getAllExcept(id)
-
+    fun getLastPointMatchLive() = pointRepository.getLastMatchLive()
     fun insertTeam(team: Team): Long {
         var teamId: Long = 0
         viewModelScope.launch(Dispatchers.IO) {

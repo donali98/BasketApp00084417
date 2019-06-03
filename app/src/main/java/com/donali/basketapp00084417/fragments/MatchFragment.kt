@@ -25,13 +25,15 @@ private const val ID_MATCH = "idMatch"
 class MatchFragment : Fragment() {
 
     lateinit var activityHelper: ActivityHelper
-    lateinit var tvTeamName:TextView
-    lateinit var tvCounter:TextView
-    lateinit var btnAddOne:Button
-    lateinit var btnAddTwo:Button
-    lateinit var btnAddThree:Button
+    lateinit var tvTeamName1:TextView
+    lateinit var tvCounter1:TextView
+    lateinit var btnAddOne1:Button
+    lateinit var btnAddTwo1:Button
+    lateinit var btnAddThree1:Button
 
     lateinit var basketViewModel:BasketViewModel
+
+    var pointId:Long = 0
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -45,26 +47,25 @@ class MatchFragment : Fragment() {
         // Inflate the layout for this fragment
         val view =  inflater.inflate(R.layout.match_team, container, false)
         basketViewModel = ViewModelProviders.of(this).get(BasketViewModel::class.java)
-        tvTeamName = view.findViewById(R.id.tv_team_name)
-        tvCounter = view.findViewById(R.id.tv_team_counter)
-        btnAddOne = view.findViewById(R.id.btn_add_one)
-        btnAddTwo = view.findViewById(R.id.btn_add_two)
-        btnAddThree = view.findViewById(R.id.btn_add_three)
+        tvTeamName1 = view.findViewById(R.id.tv_team_name_1)
+        tvCounter1 = view.findViewById(R.id.tv_team_counter_1)
+        btnAddOne1 = view.findViewById(R.id.btn_add_one_1)
+        btnAddTwo1 = view.findViewById(R.id.btn_add_two_1)
+        btnAddThree1 = view.findViewById(R.id.btn_add_three_1)
 
-        basketViewModel.getPointsOf(arguments!!.get(ID_TEAM) as Long,arguments!!.get(ID_MATCH) as Long).observe(this, Observer {
-            Log.d("MATCH",arguments!!.get(ID_MATCH).toString())
-            if(it!=null)
-                tvCounter.text = it.amount.toString()
-        })
-
-        btnAddOne.setOnClickListener {
-            val matchId = activityHelper.getMatchId()
-            val teamId = arguments!!.get(ID_TEAM) as Long
-
-//            Log.d("KEYERROR","match: $matchId, $teamId")
-//            val point = basketViewModel.insertPoint(Point(matchId,teamId, 1))
+        btnAddOne1.setOnClickListener {
+            if(pointId.toInt() == 0 ){
+                basketViewModel.insertPoint(Point(arguments!!.getLong(ID_MATCH),arguments!!.getLong(ID_TEAM),1))
+            }
+            else Log.d("ALELUYA",pointId.toString())
         }
 
+        basketViewModel.getLastPointMatchLive().observe(this, Observer {
+           if(it!=null){
+               pointId = it.id
+               tvCounter1.text = it.amount.toString()
+           }
+        })
 
         return view
     }
