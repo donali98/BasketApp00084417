@@ -1,8 +1,8 @@
 package com.donali.basketapp00084417
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.lifecycle.Observer
@@ -13,14 +13,14 @@ import com.donali.basketapp00084417.helpers.TeamSpinnerAdapter
 
 class MainActivity : AppCompatActivity() {
 
+
     lateinit var btnStartMatch: Button
-    lateinit var etTeam1: EditText
-    lateinit var etTeam2: EditText
+
     lateinit var spTeams: Spinner
     lateinit var spTeams2: Spinner
     lateinit var spinnerAdapter: TeamSpinnerAdapter
     lateinit var spinnerAdapter2: TeamSpinnerAdapter
-    lateinit var viewModel: BasketViewModel
+    lateinit var basketViewModel: BasketViewModel
 
     var idTeamSelected1: Long = 0
     var idTeamSelected2: Long = 0
@@ -34,10 +34,9 @@ class MainActivity : AppCompatActivity() {
         spTeams = findViewById(R.id.sp_teams)
         spTeams2 = findViewById(R.id.sp_teams_2)
 
-        viewModel = ViewModelProviders.of(this).get(BasketViewModel::class.java)
+        basketViewModel = ViewModelProviders.of(this).get(BasketViewModel::class.java)
 
-
-        viewModel.getAllTeams().observe(this, Observer {
+        basketViewModel.getAllTeams().observe(this, Observer {
             val spinnerArray = arrayListOf<Team>()
 
             it.forEach { team ->
@@ -54,10 +53,9 @@ class MainActivity : AppCompatActivity() {
                 idTeamSelected1 = spinnerAdapter.getItem(position)!!.id
 
 
-                Log.d("SPINNER", "first item: $idTeamSelected1")
 
 
-                viewModel.getAllTeamsExcept(spinnerAdapter.getItem(position)!!.id).observe(this@MainActivity, Observer {
+                basketViewModel.getAllTeamsExcept(spinnerAdapter.getItem(position)!!.id).observe(this@MainActivity, Observer {
 
                     val secondSpinnerArray = arrayListOf<Team>()
                     it.forEach { team ->
@@ -77,7 +75,6 @@ class MainActivity : AppCompatActivity() {
         spTeams2.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 idTeamSelected2 = spinnerAdapter2.getItem(position)!!.id
-                Log.d("SPINNER", "second item: $idTeamSelected2")
 
             }
 
@@ -86,13 +83,14 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnStartMatch.setOnClickListener {
-            val teamOne = viewModel.insertTeam(Team(etTeam1.text.toString()))
-            val teamTwo = viewModel.insertTeam(Team(etTeam2.text.toString()))
+            val intent = Intent(this@MainActivity, MatchActivity::class.java)
+            intent.putExtra("teamId1", idTeamSelected1)
+            intent.putExtra("teamId2", idTeamSelected2)
+            startActivity(intent)
 
-            Log.d("CUSTOM", teamOne.toString())
-            Log.d("CUSTOM", teamTwo.toString())
         }
     }
+
 
 
 }

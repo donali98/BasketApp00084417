@@ -1,6 +1,7 @@
 package com.donali.basketapp00084417.database
 
 import android.content.Context
+import android.util.Log
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -23,7 +24,7 @@ import java.util.*
 
 @Database(
     entities = [Team::class, BasketMatch::class, Point::class, Result::class],
-    version = 6,
+    version = 8,
     exportSchema = false
 )
 @TypeConverters(TimeStampConverter::class)
@@ -48,7 +49,7 @@ public abstract class RoomDB : RoomDatabase() {
             synchronized(this) {
                 val instance = Room.databaseBuilder(appContext, RoomDB::class.java, "BasketApp")
                     .fallbackToDestructiveMigration()
-//                    .addCallback(RoomDBCallback(scope))
+                    .addCallback(RoomDBCallback(scope))
                     .build()
                 INSTANCE = instance
                 return instance
@@ -77,6 +78,12 @@ public abstract class RoomDB : RoomDatabase() {
             basketMatchDao.deleteAll()
             teamDao.deleteAll()
 
+            val id = teamDao.insert(Team("Golden State Warriors"))
+            teamDao.insert(Team("Miami Heat"))
+            teamDao.insert(Team("Salvadorian Pacutsos"))
+
+
+            Log.d("DB",id.toString())
 
 /*            val teamInsertedId = teamDao.insert(Team("Golden State Warriors"))
             val teamSecondInsertedId = teamDao.insert(Team("Miami Heat"))

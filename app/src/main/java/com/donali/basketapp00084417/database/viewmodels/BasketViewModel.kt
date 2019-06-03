@@ -1,9 +1,12 @@
 package com.donali.basketapp00084417.database.viewmodels
 
 import android.app.Application
+import android.os.Parcel
+import android.os.Parcelable
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.donali.basketapp00084417.database.RoomDB
+import com.donali.basketapp00084417.database.entities.BasketMatch
 import com.donali.basketapp00084417.database.entities.Point
 import com.donali.basketapp00084417.database.entities.Team
 import com.donali.basketapp00084417.database.repositories.BasketMatchRepository
@@ -17,6 +20,7 @@ class BasketViewModel(val app: Application) : AndroidViewModel(app) {
     private val basketMatchRepository: BasketMatchRepository
     private val pointRepository: PointRepository
 
+
     init {
         val teamDao = RoomDB.getInstance(app, viewModelScope).teamDao()
         val basketMatchDao = RoomDB.getInstance(app, viewModelScope).basketMatchDao()
@@ -29,15 +33,15 @@ class BasketViewModel(val app: Application) : AndroidViewModel(app) {
 
     fun getAllTeams() = teamRepository.getAll()
     fun getAllMatches() = basketMatchRepository.getAll()
+    fun getLastMatchLive() = basketMatchRepository.getLastMatchLive()
     fun getAllPoints() = pointRepository.getAll()
+    fun getPointsOf(idTeam: Long, matchId: Long) = pointRepository.getPointsOf(idTeam, matchId)
+    fun getAllTeamsExcept(id: Long) = teamRepository.getAllExcept(id)
 
-
-    fun getAllTeamsExcept(id:Long) = teamRepository.getAllExcept(id)
-
-    fun insertTeam(team: Team):Long {
-        var teamId:Long = 0
+    fun insertTeam(team: Team): Long {
+        var teamId: Long = 0
         viewModelScope.launch(Dispatchers.IO) {
-           teamId = teamRepository.insert(team)
+            teamId = teamRepository.insert(team)
         }
 
         return teamId
@@ -47,5 +51,19 @@ class BasketViewModel(val app: Application) : AndroidViewModel(app) {
     fun insertPoint(point: Point) = viewModelScope.launch(Dispatchers.IO) {
         pointRepository.insert(point)
     }
+
+
+    fun updatePoints(amount: Int, idPoint: Long) = viewModelScope.launch(Dispatchers.IO) {
+        pointRepository.updatePoints(amount, idPoint)
+    }
+
+    fun insertMatch(match: BasketMatch):Long {
+        var insertedId:Long = 0
+        viewModelScope.launch(Dispatchers.IO) {
+            insertedId = basketMatchRepository.insert(match)
+        }
+        return insertedId
+    }
+
 
 }

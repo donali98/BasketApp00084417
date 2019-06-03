@@ -15,6 +15,9 @@ interface BasketMatchDao {
     @Query("select * from basket_match")
     fun getAll():LiveData<List<BasketMatch>>
 
+    @Query("select * from basket_match")
+    fun getLastMatchLive():LiveData<BasketMatch>
+
     @Query("delete from basket_match")
     suspend fun deleteAll()
 }

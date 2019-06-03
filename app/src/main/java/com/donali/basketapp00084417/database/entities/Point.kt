@@ -25,8 +25,11 @@ import androidx.room.PrimaryKey
     @ColumnInfo(name = "match_id")
     val match_id:Long,
     @ColumnInfo(name = "team_id")
-    val team_id:Long
+    val team_id:Long,
+    @ColumnInfo(name = "amount")
+    var amount:Int
 ){
     @PrimaryKey(autoGenerate = true)
     var id:Long = 0
+
 }
