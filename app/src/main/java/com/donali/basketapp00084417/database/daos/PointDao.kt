@@ -19,6 +19,11 @@ interface PointDao {
     @Query("select * from point")
     fun getLastMatchLive():LiveData<Point>
 
+    @Query("select * from point where id = :id")
+    fun getById(id:Long):LiveData<Point>
+
+    @Query("select * from point where id = :id")
+    fun getByIdNoLiveData(id:Long):Point
 
     @Query("delete from point")
     suspend fun deleteAll()

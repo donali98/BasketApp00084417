@@ -37,7 +37,7 @@ class MatchActivity : AppCompatActivity(), ActivityHelper {
 
         bViewModel.getLastMatchLive().observe(this, Observer {
             idMatch = it.id
-            val matchFragment1 = MatchFragment.newInstance(teamId1,idMatch)
+            val matchFragment1 = MatchFragment.newInstance(teamId1,teamId2,idMatch)
             supportFragmentManager.beginTransaction().add(R.id.fl_match,matchFragment1).commit()
         })
 

@@ -12,6 +12,9 @@ class PointRepository(private val pointDao: PointDao) {
 
     fun getLastMatchLive() = pointDao.getLastMatchLive()
 
+    fun getById(id:Long) = pointDao.getById(id)
+
+    fun getByIdNoLiveData(id:Long) = pointDao.getByIdNoLiveData(id)
 
     @WorkerThread
     suspend fun deleteAll() = pointDao.deleteAll()

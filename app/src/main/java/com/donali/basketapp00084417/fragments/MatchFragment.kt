@@ -19,7 +19,8 @@ import com.donali.basketapp00084417.helpers.ActivityHelper
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ID_TEAM = "idTeam"
+private const val ID_TEAM_1 = "idTeam1"
+private const val ID_TEAM_2 = "idTeam2"
 private const val ID_MATCH = "idMatch"
 
 class MatchFragment : Fragment() {
@@ -55,11 +56,29 @@ class MatchFragment : Fragment() {
 
         btnAddOne1.setOnClickListener {
             if(pointId.toInt() == 0 ){
-                basketViewModel.insertPoint(Point(arguments!!.getLong(ID_MATCH),arguments!!.getLong(ID_TEAM),1))
+                basketViewModel.insertPoint(Point(arguments!!.getLong(ID_MATCH),arguments!!.getLong(ID_TEAM_1),1))
             }
-            else Log.d("ALELUYA",pointId.toString())
+            else basketViewModel.updatePoints(1,pointId)
+        }
+        btnAddTwo1.setOnClickListener {
+            if(pointId.toInt() == 0 ){
+                basketViewModel.insertPoint(Point(arguments!!.getLong(ID_MATCH),arguments!!.getLong(ID_TEAM_1),2))
+            }
+            else basketViewModel.updatePoints(2,pointId)
+        }
+        btnAddThree1.setOnClickListener {
+            if(pointId.toInt() == 0 ){
+                basketViewModel.insertPoint(Point(arguments!!.getLong(ID_MATCH),arguments!!.getLong(ID_TEAM_1),3))
+            }
+            else basketViewModel.updatePoints(3,pointId)
         }
 
+        basketViewModel.getPointById(pointId).observe(this, Observer {
+            if(pointId.toInt()!=0 && it!=null){
+                tvCounter1.text = it.amount.toString()
+
+            }
+        })
         basketViewModel.getLastPointMatchLive().observe(this, Observer {
            if(it!=null){
                pointId = it.id
@@ -72,11 +91,12 @@ class MatchFragment : Fragment() {
 
     companion object {
 
-        fun newInstance(param1: Long,param2:Long) =
+        fun newInstance(param1: Long,param2:Long,param3:Long) =
             MatchFragment().apply {
                 arguments = Bundle().apply {
-                    putLong(ID_TEAM, param1)
-                    putLong(ID_MATCH, param2)
+                    putLong(ID_TEAM_1, param1)
+                    putLong(ID_TEAM_2, param2)
+                    putLong(ID_MATCH, param3)
                 }
             }
     }
