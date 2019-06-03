@@ -15,9 +15,13 @@ class MainActivity : AppCompatActivity() {
 
         val viewModel = ViewModelProviders.of(this).get(BasketViewModel::class.java)
 
-        viewModel.getAllTeams().observe(this, Observer {
-            it.forEach {team->
-                Log.d("CUSTOM",team.name)
+
+        viewModel.getAllMatches().observe(this, Observer {
+            it.forEach{match->
+                Log.d("CUSTOM","start date: ${match.start_date}")
+                Log.d("CUSTOM","id: ${match.id}")
+                Log.d("CUSTOM","team id 1 ${match.id_team_1}")
+                Log.d("CUSTOM","team id 2 ${match.id_team_2}")
             }
         })
     }

@@ -24,9 +24,9 @@ data class BasketMatch (
     val id_team_1:Long,
     @ColumnInfo(name = "id_team_2")
     val id_team_2:Long,
-    @ColumnInfo(name = "end_date")
+    @ColumnInfo(name = "start_date")
     @TypeConverters(TimeStampConverter::class)
-    val end_date:Date
+    val start_date:Date
 ){
     @PrimaryKey(autoGenerate = true)
     var id:Long = 0
