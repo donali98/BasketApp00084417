@@ -22,7 +22,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @Database(
-    entities = [Team::class, BasketMatch::class, Point::class,Result::class],
+    entities = [Team::class, BasketMatch::class, Point::class, Result::class],
     version = 6,
     exportSchema = false
 )
@@ -34,12 +34,34 @@ public abstract class RoomDB : RoomDatabase() {
     abstract fun pointDao(): PointDao
     abstract fun resultDao(): ResultDao
 
+    companion object {
+        @Volatile
+        private var INSTANCE: RoomDB? = null
+
+        fun getInstance(
+            appContext: Context,
+            scope: CoroutineScope
+        )
+                : RoomDB {
+            val tmp = INSTANCE
+            if (tmp != null) return tmp
+            synchronized(this) {
+                val instance = Room.databaseBuilder(appContext, RoomDB::class.java, "BasketApp")
+                    .fallbackToDestructiveMigration()
+//                    .addCallback(RoomDBCallback(scope))
+                    .build()
+                INSTANCE = instance
+                return instance
+            }
+        }
+    }
+
     private class RoomDBCallback(private val scope: CoroutineScope) : RoomDatabase.Callback() {
         override fun onOpen(db: SupportSQLiteDatabase) {
             super.onOpen(db)
             INSTANCE?.let { database ->
                 scope.launch(Dispatchers.IO) {
-                    populateDB(database.teamDao(), database.basketMatchDao(),database.pointDao(),database.resultDao())
+                    populateDB(database.teamDao(), database.basketMatchDao(), database.pointDao(), database.resultDao())
                 }
             }
         }
@@ -56,7 +78,7 @@ public abstract class RoomDB : RoomDatabase() {
             teamDao.deleteAll()
 
 
-            val teamInsertedId = teamDao.insert(Team("Golden State Warriors"))
+/*            val teamInsertedId = teamDao.insert(Team("Golden State Warriors"))
             val teamSecondInsertedId = teamDao.insert(Team("Miami Heat"))
             val cal = Calendar.getInstance()
             cal.add(Calendar.DATE,1)
@@ -64,31 +86,8 @@ public abstract class RoomDB : RoomDatabase() {
             val match_id = basketMatchDao.insert(BasketMatch(teamInsertedId, teamSecondInsertedId, dateFormat.parse(dateFormat.format(cal.time))))
             pointDao.insert(Point(match_id,teamSecondInsertedId))
 //            pointDao.insert(Point(match_id,teamInsertedId))
-            resultDao.insert(Result(match_id,teamInsertedId))
+            resultDao.insert(Result(match_id,teamInsertedId))*/
         }
     }
-
-    companion object {
-        @Volatile
-        private var INSTANCE: RoomDB? = null
-
-        fun getInstance(
-            appContext: Context,
-            scope: CoroutineScope
-        )
-                : RoomDB {
-            val tmp = INSTANCE
-            if (tmp != null) return tmp
-            synchronized(this) {
-                val instance = Room.databaseBuilder(appContext, RoomDB::class.java, "BasketApp")
-                    .fallbackToDestructiveMigration()
-                    .addCallback(RoomDBCallback(scope))
-                    .build()
-                INSTANCE = instance
-                return instance
-            }
-        }
-    }
-
 
 }
