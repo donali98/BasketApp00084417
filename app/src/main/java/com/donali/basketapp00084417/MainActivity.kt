@@ -45,8 +45,11 @@ class MainActivity : AppCompatActivity() {
                 spTeams.adapter = spinnerAdapter
                 spTeams.onItemSelectedListener = object :AdapterView.OnItemSelectedListener{
                     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                        val team =spinnerAdapter.getItem(position)
-                        Toast.makeText(this@MainActivity,team?.name,Toast.LENGTH_SHORT).show()
+                        viewModel.getAllTeamsExcept(spinnerAdapter.getItem(position)!!.id).observe(this@MainActivity, Observer {
+                            it.forEach {team->
+                                Log.d("SPINNER",team.name)
+                            }
+                        })
                     }
 
                     override fun onNothingSelected(parent: AdapterView<*>?) {

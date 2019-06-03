@@ -12,4 +12,6 @@ class TeamRepository(val teamDao: TeamDao) {
     fun getOne(id:Long) = teamDao.getOne(id)
 
     fun getAll() = teamDao.getAll()
+
+    fun getAllExcept(id:Long) = teamDao.getAllExcept(id)
 }

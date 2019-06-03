@@ -20,6 +20,8 @@ interface TeamDao {
     @Query("select * from team")
     fun getAll():LiveData<List<Team>>
 
+    @Query("select * from team where id!= :id")
+    fun getAllExcept(id:Long):LiveData<List<Team>>
 
     @Query("delete from team")
     suspend fun deleteAll()

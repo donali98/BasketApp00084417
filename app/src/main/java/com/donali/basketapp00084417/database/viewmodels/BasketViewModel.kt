@@ -32,6 +32,8 @@ class BasketViewModel(val app: Application) : AndroidViewModel(app) {
     fun getAllPoints() = pointRepository.getAll()
 
 
+    fun getAllTeamsExcept(id:Long) = teamRepository.getAllExcept(id)
+
     fun insertTeam(team: Team):Long {
         var teamId:Long = 0
         viewModelScope.launch(Dispatchers.IO) {
