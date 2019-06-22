@@ -1,5 +1,6 @@
 package com.donali.basketapp00084417
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -17,33 +18,45 @@ import java.util.*
 class MatchActivity : AppCompatActivity(), ActivityHelper {
 
 
-    lateinit var basketMatch: BasketMatch
     lateinit var bViewModel: BasketViewModel
-    lateinit var myMatch: BasketMatch
 
-    var idMatch:Long = 0
+    var pointIdTeam1: Long = 0
+    var pointIdTeam2: Long = 0
+    var idMatch: Long = 0
+
+    var counter = 0
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_match)
 
-        val cal = Calendar.getInstance()
-        cal.add(Calendar.DATE, 1)
-        val dateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy")
-        bViewModel = ViewModelProviders.of(this).get(BasketViewModel::class.java)
         val teamId1 = intent.extras.getLong("teamId1")
         val teamId2 = intent.extras.getLong("teamId2")
-        bViewModel.insertMatch(BasketMatch(teamId1, teamId2, dateFormat.parse(dateFormat.format(cal.time))))
+        bViewModel = ViewModelProviders.of(this).get(BasketViewModel::class.java)
+        bViewModel.setMatchLogic(teamId1, teamId2)
 
-        bViewModel.getLastMatchLive().observe(this, Observer {
-            idMatch = it.id
-            val matchFragment1 = MatchFragment.newInstance(teamId1,teamId2,idMatch)
-            supportFragmentManager.beginTransaction().add(R.id.fl_match,matchFragment1).commit()
+        bViewModel.params.observe(this, Observer {
+            it.forEach { param ->
+                when (counter) {
+                    0 -> {
+                        pointIdTeam1 = param
+                    }
+                    1 -> {
+                        pointIdTeam2 = param
+                    }
+                    2 ->{
+                        idMatch = param
+                    }
+
+                }
+                counter++
+            }
+
+            Log.d("CUSTOM","point id team 1: $pointIdTeam1, point id team 2: $pointIdTeam2, idMatch: ${idMatch}")
         })
-
     }
 
-    override fun getMatchId(): Long = idMatch
 
     override fun getBasketViewModel(): BasketViewModel = bViewModel
 

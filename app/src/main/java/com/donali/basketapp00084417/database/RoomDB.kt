@@ -49,7 +49,7 @@ public abstract class RoomDB : RoomDatabase() {
             synchronized(this) {
                 val instance = Room.databaseBuilder(appContext, RoomDB::class.java, "BasketApp")
                     .fallbackToDestructiveMigration()
-                    .addCallback(RoomDBCallback(scope))
+                    .addCall    back(RoomDBCallback(scope))
                     .build()
                 INSTANCE = instance
                 return instance

@@ -1,9 +1,9 @@
 package com.donali.basketapp00084417.database.viewmodels
 
 import android.app.Application
-import android.os.Parcel
-import android.os.Parcelable
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.donali.basketapp00084417.database.RoomDB
 import com.donali.basketapp00084417.database.entities.BasketMatch
@@ -13,13 +13,18 @@ import com.donali.basketapp00084417.database.repositories.BasketMatchRepository
 import com.donali.basketapp00084417.database.repositories.PointRepository
 import com.donali.basketapp00084417.database.repositories.TeamRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 class BasketViewModel(val app: Application) : AndroidViewModel(app) {
     private val teamRepository: TeamRepository
     private val basketMatchRepository: BasketMatchRepository
     private val pointRepository: PointRepository
 
+    val params = MutableLiveData<ArrayList<Long>>()
 
     init {
         val teamDao = RoomDB.getInstance(app, viewModelScope).teamDao()
@@ -32,38 +37,30 @@ class BasketViewModel(val app: Application) : AndroidViewModel(app) {
     }
 
     fun getAllTeams() = teamRepository.getAll()
-    fun getAllMatches() = basketMatchRepository.getAll()
-    fun getLastMatchLive() = basketMatchRepository.getLastMatchLive()
-    fun getAllPoints() = pointRepository.getAll()
-    fun getPointById(id:Long) = pointRepository.getById(id)
-    fun getByIdNoLiveData(id:Long) = pointRepository.getByIdNoLiveData(id)
     fun getAllTeamsExcept(id: Long) = teamRepository.getAllExcept(id)
-    fun getLastPointMatchLive() = pointRepository.getLastMatchLive()
-    fun insertTeam(team: Team): Long {
-        var teamId: Long = 0
-        viewModelScope.launch(Dispatchers.IO) {
-            teamId = teamRepository.insert(team)
-        }
 
-        return teamId
 
-    }
-
-    fun insertPoint(point: Point) = viewModelScope.launch(Dispatchers.IO) {
-        pointRepository.insert(point)
+    fun insertMatch(match: BasketMatch) =GlobalScope.launch(Dispatchers.IO) {
+        val insertedId = basketMatchRepository.insert(match)
+        Log.d("CUSTOM", "ahuevo $insertedId")
     }
 
 
-    fun updatePoints(amount: Int, idPoint: Long) = viewModelScope.launch(Dispatchers.IO) {
-        pointRepository.updatePoints(amount, idPoint)
-    }
+     fun setMatchLogic(idTeam1:Long,idTeam2:Long) = viewModelScope.launch(Dispatchers.IO){
+        val cal = Calendar.getInstance()
+        cal.add(Calendar.DATE,  1)
+        val dateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy")
+        val matchId = basketMatchRepository.insert(BasketMatch(idTeam1,idTeam2,dateFormat.parse(dateFormat.format(cal.time))))
+        val pTeam1 = pointRepository.insert(Point(matchId,idTeam1,0))
+        val pTeam2= pointRepository.insert(Point(matchId,idTeam2,0))
+        val paramsArray = ArrayList<Long>()
 
-    fun insertMatch(match: BasketMatch):Long {
-        var insertedId:Long = 0
-        viewModelScope.launch(Dispatchers.IO) {
-            insertedId = basketMatchRepository.insert(match)
-        }
-        return insertedId
+        paramsArray.add(pTeam1)
+        paramsArray.add(pTeam2)
+        paramsArray.add(matchId)
+
+        params.postValue(paramsArray)
+
     }
 
 

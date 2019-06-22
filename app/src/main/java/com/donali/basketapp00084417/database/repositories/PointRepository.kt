@@ -6,7 +6,7 @@ import com.donali.basketapp00084417.database.entities.Point
 
 class PointRepository(private val pointDao: PointDao) {
     @WorkerThread
-    suspend fun insert(point:Point) = pointDao.insert(point)
+    suspend fun insert(point:Point):Long = pointDao.insert(point)
 
     fun getAll() = pointDao.getAll()
 
